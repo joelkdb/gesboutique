@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="cssLayout.css" />
+        <h:outputStylesheet library="css" name="default.css" />
+        <!--<h:outputStylesheet name="./css/materialize.css"/>-->
+        <title>#{titlePage}</title>
+    </h:head>
+
+    <h:body>
+        <f:view locale="#{defineLang.locale}">
+            <p:growl id="msgs" showDetail="true" life="10000" autoUpdate="true" globalOnly="true"/>
+            <div id="top" class="top">
+                <ui:insert name="top">
+                    <p:outputLabel value="BOUTIQUE" styleClass="app-name" 
+                                       style="margin-left: 15px"/>
+                </ui:insert>
+            </div>
+            <hr size="0"/>
+            <div>
+                <div id="left">
+                    <ui:insert name="left">
+                        <h:form>
+                            <p:menu toggleable="true" style="width: 250px;">
+                                <p:menuitem value="#{msg['boutique.acceuil']}" icon="ui-icon-home" outcome="/index"/>
+                                <p:submenu label="#{msg['boutique.menu1']}">
+                                    <p:menuitem value="#{msg['boutique.menu1sub1']}" icon="ui-icon-document" 
+                                                outcome="/ListeCategories"/>
+                                </p:submenu>
+                                <p:submenu label="#{msg['boutique.menu2']}">
+                                    <p:menuitem value="#{msg['boutique.menu2sub1']}" icon="ui-icon-document" 
+                                                outcome="/ListeProduit"/>
+                                    <p:menuitem value="#{msg['boutique.menu2sub2']}" icon="ui-icon-plusthick" 
+                                                outcome="/EditProduit" action="#{editProdManagedBean.nouveauProd()}"/>
+                                    <p:menuitem value="#{msg['boutique.menu2sub3']}" icon="ui-icon-document" 
+                                                outcome="/ListeProduit2" action="#{editProdManagedBean.nouveauProd()}"/>
+                                </p:submenu>
+                                <p:submenu label="#{msg['boutique.menu3']}">
+                                    <p:menuitem value="#{msg['boutique.menu3sub1']}" update="@all" 
+                                                actionListener="#{defineLang.setFrenchLocale()}"/>
+                                    <p:menuitem value="#{msg['boutique.menu3sub2']}" update="@all" 
+                                                actionListener="#{defineLang.setEnglishLocale()}"/>
+                                </p:submenu>
+                            </p:menu>
+                        </h:form>
+                    </ui:insert>
+                </div>
+                <div id="content" class="left_content">
+                    <center>
+                        <ui:insert name="content"></ui:insert>
+                    </center>
+                </div>
+            </div>
+        </f:view>
+    </h:body>
+
+</html>

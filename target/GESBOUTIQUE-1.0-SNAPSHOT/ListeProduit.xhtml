@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:param name="titlePage" value="BOUTIQUE | Liste-Produit"/>
+    <ui:define name="content">
+        <h:form id="listeProd">
+            <h:panelGrid columns="2" cellpadding="5">
+                <p:outputLabel value="#{msg['categorie']}" style="margin: 0 0 0 -15px;"/>
+                <p:selectOneMenu id="catProd" value="#{editProdManagedBean.idCateg}" effect="slide">
+                    <f:selectItem itemLabel="Sélectionner un" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{categorieManagedBean.allCategories}" var="item" itemLabel="#{item.libelle}"
+                                   itemValue="#{item.id}"/>
+                    <p:ajax update=":listeProd"/>
+                </p:selectOneMenu>
+            </h:panelGrid>
+            <p:dataTable var="item" paginator="true" rows="5" value="#{editProdManagedBean.allProduit}"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} 
+                 {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15" emptyMessage="Aucun enregistrement trouvé" id="produitsTable" 
+                 style="padding-top: 10px">
+                <f:facet name="header">
+                    <p:outputLabel value="#{msg['produit.nomTableProd']} #{item.libelle}"/>
+                </f:facet>
+                <p:column headerText="#{msg['produit.id']}" sortBy="#{item.id}" filterBy="#{item.id}">
+                    <center><h:outputText value="#{item.id}"/></center>
+                </p:column>
+                <p:column headerText="#{msg['produit.libelle']}" sortBy="#{item.libelle}" filterBy="#{item.libelle}">
+                    <center><h:outputText value="#{item.libelle}"/></center>
+                </p:column>
+                <p:column headerText="#{msg['produit.pu']}">
+                    <center>
+                        <h:outputText value="#{item.prixUnitaire}">
+                        </h:outputText>
+                    </center>
+                </p:column>
+                <p:column headerText="#{msg['produit.datePeremption']}">
+                    <center>
+                        <h:outputText value="#{item.datePeremption}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </center>
+                </p:column>
+                <p:column headerText="#{msg['produit.perime']}">
+                    <center>
+                        <c:if test="#{item.estPerime()}">
+                            <!--<h:outputText value="Oui"/>-->
+                            <p:graphicImage library="img" name="img5.PNG" style="height: 30px;"/>
+                        </c:if>
+                        <c:if test="#{item.estPerime()}">
+                            <!--<h:outputText value="Non"/>-->
+                            <p:graphicImage library="img" name="img3.JPG" style="height: 30px;"/>
+                        </c:if>
+                    </center>
+                </p:column>
+                <p:column exportable="false">
+                    <f:facet name="header">
+                        <h:outputText value="#{msg['produit.action']}"/>
+                    </f:facet>
+                    <center>
+                        <p:commandButton icon="ui-icon-pencil" id="editer" action="#{editProdManagedBean.renvoieProduit(item)}" 
+                                         title="Cliquer pour éditer"/>
+                         <p:commandButton icon="ui-icon-trash" onclick="PF('dlgConfirm').show();" id="retirer" 
+                                          action="#{editProdManagedBean.renvoieProdSup(item)}" title="Cliquer pour retirer"/>
+                    </center>
+                </p:column>
+                <f:facet name="footer">
+                    <p:outputPanel>
+                        <p:commandButton icon="ui-icon-plusthick" value="#{msg['boutique.nouveau']}" 
+                                         title="Enregistrer nouveau produit" action="#{editProdManagedBean.nouveauProd()}"/>
+                        <h:commandLink value="#{msg['boutique.exportPDF']}" title="Exporter données présentes en PDF" 
+                                       style="text-decoration: none; margin-right: 15px; margin-left: 15px">
+                            <p:dataExporter type="pdf" target="produitsTable" fileName="ProduitDeCategorie"/>
+                        </h:commandLink>
+                        <h:commandLink value="#{msg['boutique.exportXLS']}" role="button" 
+                                       title="Exporter données présentes en fichier Excel" style="text-decoration: none;">
+                            <p:dataExporter type="xls" target="produitsTable" fileName="ProduitDeCategorie"/>
+                        </h:commandLink>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+        <p:dialog header="#{msg['categorie.confirmation']}" widgetVar="dlgConfirm" resizable="false">
+                <h:form id="deleteDlgForm2">
+                    <h:panelGrid columns="1" cellpadding="5">
+                        <h:outputLabel value="#{msg['produit.produitQuest']}"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="#{msg['categorie.ouiAnswer']}" 
+                                             action="#{editProdManagedBean.supprimerProduit()}" 
+                                             update=":deleteDlgForm2,:listeProd,msgs" onclick="PF('dlgConfirm').hide();"/>
+                            <p:commandButton value="#{msg['categorie.nonAnswer']}" 
+                                             action="#{editProdManagedBean.annulerSupProd()}" 
+                                             update=":deleteDlgForm2" onclick="PF('dlgConfirm').hide();"/>
+                        </f:facet>
+                    </h:panelGrid>
+                </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>
